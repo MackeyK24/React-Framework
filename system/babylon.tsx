@@ -49,7 +49,6 @@ type AssetProgressMessage = {
 
 /**
  * ES6 Interactive Babylon Toolkit Scene Viewer (GLTF)
- * Example: navigate('/play', { state: { fromApp: true, rootPath: '/scenes/', sceneFile: 'sampleScene.gltf' } });
  */
 
 function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes<HTMLCanvasElement>) {

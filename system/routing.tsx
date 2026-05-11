@@ -14,8 +14,14 @@ interface ApplicationRouteProps {
  * If they try to access it directly (e.g., via browser URL), they will be redirected.
  * The navigation within the app should set location state { fromApp: true }.
  * Example: navigate('/play', { state: { fromApp: true } });
+ * OR
+ * @example
+ * GameManager.NavigateTo("/play", {
+ *     gameMode: "DefaultGameMode",
+ *     rootPath: GameManager.AwsPlaygroundRepo,
+ *     sceneFile: "samplescene.gltf",
+ * });
  */
-
 export default function ApplicationRoute({ children, redirectTo = '/', allowDevMode = false }: ApplicationRouteProps) {
   const { navigate, location } = useUnifiedNavigation();
   const allowByState: boolean = Boolean(location.state?.fromApp);
