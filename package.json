@@ -1,0 +1,36 @@
+{
+  "name": "@babylonjs-toolkit/react",
+  "version": "0.0.1",
+  "description": "Babylon Toolkit React Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "npm publish --access public"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MackeyK24/React-Framework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MackeyK24/React-Framework/issues"
+  },
+  "homepage": "https://github.com/MackeyK24/React-Framework#readme",
+
+  "peerDependencies": {
+    "@babylonjs-toolkit/dlc": "9.1.0",
+    "@babylonjs-toolkit/next": "9.1.0",
+    "@babylonjs/core": "^9.5.0",
+    "@babylonjs/gui": "^9.5.0",
+    "@babylonjs/havok": "^1.3.10",
+    "@babylonjs/inspector": "^9.5.0",
+    "@babylonjs/loaders": "^9.5.0",
+    "@babylonjs/materials": "^9.5.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  }
+}
