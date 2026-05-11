@@ -155,10 +155,11 @@ function BaseSceneViewer(props: BabylonjsProps & React.CanvasHTMLAttributes<HTML
           if (engine) {
               try { engine.stopRenderLoop(); } catch (e) { console.warn(e); }
               try { SceneManager.HideLoadingScreen(engine, false); } catch (e) { console.warn(e); }
+              try { GameManager.HideSplashScreen(scene); } catch (e) { console.warn(e); }
           }
 
           if (scene) {
-              try { SceneManager.DeleteReactNavigationHook(scene); } catch (e) { console.warn(e); }
+              try { GameManager.DeleteReactNavigationHook(); } catch (e) { console.warn(e); }
           }
 
           if (scene && !scene.isDisposed) {
