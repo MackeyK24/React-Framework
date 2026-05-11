@@ -93,25 +93,6 @@ class GameManager {
             if (status) status.textContent = text;
         }
     }
-    /** KEEP-FOR-REFERENCE: Navigate to the classic demo scene with optional page reload (Note: This is just an example of navigation from scene, replace or remove as needed) */
-    // public static ClassicNavigateToHack(reload: boolean): void {
-    //     window.history.pushState(
-    //     {
-    //         fromApp: true,
-    //         rootPath: "/scenes/",
-    //         sceneFile: "samplescene.gltf",
-    //         gameMode: "PlayerControllerDemo",
-    //         importMeshes: ["playerarmature.gltf"],
-    //     },
-    //     "",
-    //     "/play"
-    //     );
-    //     if (reload) {
-    //         window.location.reload();
-    //     } else {
-    //         window.dispatchEvent(new PopStateEvent("popstate"));
-    //     }
-    // }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Window Location State
