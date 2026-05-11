@@ -6,6 +6,7 @@ import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { HavokPlugin } from "@babylonjs/core/Physics/v2/Plugins/havokPlugin";
 import HavokPhysics from "@babylonjs/havok";
 import { SceneManager, LocalMessageBus } from "@babylonjs-toolkit/next";
+import { INavigationState, UnifiedNavigateFunction, UnifiedNavigationOptions } from "./system/platform";
 
 // Preload Game Mode Side Effects
 import "./classes/DefaultGameMode"; 
@@ -14,7 +15,7 @@ import "./classes/DemoGameMode";
 
 class GameManager {
     /** Initialize the game runtime environment */
-    public static async InitializeRuntime(scene:Scene, enablePhysics:boolean = true, showLoadingScreen:boolean = true, hideEngineLoadingUI:boolean = false): Promise<void> {
+    public static async InitializeRuntime(scene:Scene, navigateToFunction: UnifiedNavigateFunction | null = null, enablePhysics:boolean = true, showLoadingScreen:boolean = true, hideEngineLoadingUI:boolean = false): Promise<void> {
         if (scene.isDisposed) return; // Note: Strict mode safety
         await SceneManager.InitializeRuntime(scene.getEngine(), { showDefaultLoadingScreen: showLoadingScreen, hideLoadingUIWithEngine: hideEngineLoadingUI });
         if (GameManager.IsDevelopmentMode) await import("@babylonjs/inspector");
@@ -24,8 +25,8 @@ class GameManager {
         await import("@babylonjs-toolkit/dlc/ThirdPersonPlayerController");
         if (scene.isDisposed) return; // Note: Strict mode safety
 
-        // Set React Navigation Hook (Note: Remark or remove to disable navigation from scene)
-        // DEPREACTED - SceneManager.SetReactNavigationHook(scene, navigateToFunction);
+        // Set React Navigation Hook
+        GameManager.SetReactNavigationHook(navigateToFunction);
 
         // Havok is only loaded once globally AFTER SceneManager.InitializeRuntime
         if (enablePhysics)
@@ -113,56 +114,78 @@ class GameManager {
     // }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Window Location State
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Sets the window location to navigate to a new route.
+     * @param route The route path to navigate.
+     * @param options The navigation options.
+     * @optional Use { replace: true } in nav options to replace current history entry instead of pushing a new one.
+     * @example GameManager.SetWindowLocation("/play?scene=samplescene.gltf&mode=FreeCameraMode", { replace: true });
+     */
+    public static SetWindowLocation(route: string, options: any = null): void {
+        // Note: Force Full Page Reload Navigation
+        if (options?.replace === true) {
+            window.location.replace(route);
+        } else {
+            window.location.assign(route);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Global Navigation State
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // /**
-    //  * Executes a React router navigation to the specified route
-    //  * @param scene The scene instance.
-    //  * @param route The route path to navigate.
-    //  * @param options The navigation options.
-    //  * @optional To force a full page reload, use: window.location assign or replace to set the route. (No From App State Supported)
-    //  * @optional Use { replace: true } in nav options to replace current history entry instead of pushing a new one.
-    //  * @example SceneManager.NavigateTo(scene, "/babylon?scene=samplescene.gltf", { replace: true });
-    //  */
-    // public static NavigateTo(scene: BABYLON.Scene, route: string, options: any = null, useWindowLocation: boolean = false): void {
-    //     if (useWindowLocation === true) {
-    //         // Note: Force Full Page Reload Navigation
-    //         if (options?.replace === true) {
-    //             window.location.replace(route);
-    //         } else {
-    //             window.location.assign(route);
-    //         }
-    //         return;
-    //     }
-    //     //////////////////////////////////////////////////////////////////////////////////////////////////////              
-    //     // React Router Navigation
-    //     // Requires SetReactNavigationHook to be set on scene.
-    //     // Note: Example react protected route navigate("/demo", { state: { fromApp: true } });
-    //     //////////////////////////////////////////////////////////////////////////////////////////////////////              
-    //     if ((scene as any).reactNavigationFunction != null) {
-    //         const navOptions = { ...options, state: { ...(options?.state || {}), fromApp: true } };
-    //         (scene as any).reactNavigationFunction(route, navOptions);
-    //     } else {
-    //         console.warn("React navigation hook is not set on the scene.");
-    //     }
-    // }
-    // /** Sets the React router navigation hook on the scene
-    //  * @param scene The scene instance.
-    //  * @param navigateToFunction The react router navigate function.
-    //  */
-    // public static SetReactNavigationHook(scene: BABYLON.Scene, navigateToFunction: any): void {
-    //     (scene as any).reactNavigationFunction = navigateToFunction;
-    // }
-    // /** Deletes the React router navigation hook on the scene
-    //  * @param scene The scene instance.
-    //  */
-    // public static DeleteReactNavigationHook(scene: BABYLON.Scene): void {
-    //     if ((scene as any).reactNavigationFunction != null) {
-    //         (scene as any).reactNavigationFunction = null;
-    //         try { delete (scene as any).reactNavigationFunction; } catch (e) { console.warn(e); }
-    //     }
-    // }
+    private static ReactNavigationFunction: UnifiedNavigateFunction | null = null;
+    /**
+     * Executes a cross-platform navigation to the specified route.
+     * @param route The route path to navigate to.
+     * @param state Optional navigation state to pass to the destination route.
+     *
+     * @example
+     * GameManager.NavigateTo("/play", {
+     *     gameMode: "DefaultGameMode",
+     *     rootPath: GameManager.AwsPlaygroundRepo,
+     *     sceneFile: "samplescene.gltf",
+     * });
+     */
+    public static NavigateTo(route: string, state: INavigationState | null = null): void {
+        //////////////////////////////////////////////////////////////////////////////////////////////////////              
+        // Cross Platform Router Navigation (React, Next.js, Gatsby, etc.)
+        // Requires Unified Navigation Adapter to be setup in host project.
+        //////////////////////////////////////////////////////////////////////////////////////////////////////              
+        if (GameManager.ReactNavigationFunction != null) {
+            const navOptions: UnifiedNavigationOptions = {
+                state: {
+                    ...(state ?? {}),
+                    fromApp: true,
+                },
+            };
+            GameManager.ReactNavigationFunction(route, navOptions);
+        } else {
+            console.warn("React navigation hook is not set on the game manager.");
+        }
+    }
+    /** Checks if the React router navigation hook is set on the game manager.
+     * @returns True if the React navigation hook is set, false otherwise.
+     */
+    public static HasReactNavigationHook(): boolean {
+        return GameManager.ReactNavigationFunction != null;
+    }
+    /** Sets the React router navigation hook on the game manager for in-game navigation from scenes and UI components.
+     * @param navigateToFunction The react router navigate function.
+     */
+    public static SetReactNavigationHook(navigateToFunction: UnifiedNavigateFunction | null): void {
+        GameManager.ReactNavigationFunction = navigateToFunction;
+    }
+    /** Deletes the React router navigation hook on the game manager to prevent memory leaks and unintended navigation after scene disposal.
+     */
+    public static DeleteReactNavigationHook(): void {
+        if (GameManager.ReactNavigationFunction != null) {
+            GameManager.ReactNavigationFunction = null;
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Global Game State

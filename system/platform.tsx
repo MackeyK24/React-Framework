@@ -15,25 +15,35 @@
 
 import { createContext, createElement, useContext, ReactNode } from "react";
 
-// Type definitions for unified navigation
-export type NavigationState = {
-  fromApp?: boolean;
-  gameMode?: string;
-  rootPath?: string;
-  sceneFile?: string;
-  assetFiles?: string[];
-  importMeshes?: string[];
-  auxiliaryData?: string;
-  [key: string]: any;
+export interface INavigationState {
+    gameMode?: string;
+    rootPath?: string;
+    sceneFile?: string;
+    assetFiles?: string[];
+    importMeshes?: string[];
+    auxiliaryData?: string;
+}
+
+export type NavigationState = INavigationState & {
+    fromApp?: boolean;
+    [key: string]: any;
 };
+
+export type UnifiedNavigationOptions = {
+    state?: NavigationState;
+    replace?: boolean;
+};
+
+export type UnifiedNavigateFunction = (
+    path: string,
+    options?: UnifiedNavigationOptions
+) => void;
 
 export type LocationState = {
   pathname: string;
   search: string;
   state?: NavigationState;
 };
-
-export type UnifiedNavigateFunction = (path: string, options?: { state?: NavigationState; replace?: boolean }) => void;
 
 export type UnifiedNavigation = {
   navigate: UnifiedNavigateFunction;
