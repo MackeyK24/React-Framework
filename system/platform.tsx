@@ -24,7 +24,6 @@ export type NavigationState = {
   assetFiles?: string[];
   importMeshes?: string[];
   auxiliaryData?: string;
-  hideSplashScreen?: boolean;
   [key: string]: any;
 };
 

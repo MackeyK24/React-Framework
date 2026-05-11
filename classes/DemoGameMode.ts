@@ -1,15 +1,13 @@
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { SceneManager, ScriptComponent, LocalMessageBus, GameModeController } from "@babylonjs-toolkit/next";
+import { ThirdPersonPlayerController } from "@babylonjs-toolkit/dlc";
 import { SceneViewerProps } from "../system/babylon";
 import GameManager from "../globals";
 
-export class FreeCameraMode extends GameModeController {
-    private camera: FreeCamera | null = null;
-
-    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "FreeCameraMode") {
+export class DemoGameMode extends GameModeController {
+    
+    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "DemoGameMode") {
         super(transform, scene, properties, alias);
     }
 
@@ -50,8 +48,7 @@ export class FreeCameraMode extends GameModeController {
     }
 
     protected destroy(): void {
-        this.camera?.dispose();
-        this.camera = null;
+        /* Destroy component function */
     }
 
     /* Game Mode Controller Functions */
@@ -59,7 +56,7 @@ export class FreeCameraMode extends GameModeController {
     protected async onSceneReady(props: SceneViewerProps): Promise<void> {
         setTimeout(async () => {
 
-            console.log("FreeCameraMode - Ready");
+            console.log("DemoGameMode - Ready");
             await this.initializeGameMode(props);
 
         }, 1000); // Note: Timeout is ensure this runs after the main scene ready event processing completes
@@ -67,16 +64,22 @@ export class FreeCameraMode extends GameModeController {
 
     protected async initializeGameMode(props: SceneViewerProps): Promise<void> {
         try {
-            /** Initialize free camera mode */
-            this.camera = new FreeCamera("FreeCamera", new Vector3(0, 5, -10), this.scene);
-            const canvas = this.scene.getEngine().getRenderingCanvas();
-            if (canvas)this.camera.attachControl(canvas, true);
+            /** Initialize the demo player controller game mode */
+            const player = this.scene.getNodeByName("PlayerArmature") as TransformNode;
+            if (player != null) {
+                const controller = new ThirdPersonPlayerController(player, this.scene, { arrowKeyRotation: true, smoothMotionSpeed:true, smoothChangeRate: 25.0 });
+                controller.enableInput = true;
+                controller.attachCamera = true;
+                controller.moveSpeed = 5.335;
+                controller.walkSpeed = 2.0;
+                controller.jumpSpeed = 12.0;
+            }
         } catch (e) {
-            console.error("Failed to initialize free camera game mode", e);
+            console.error("Failed to initialize demo game mode", e);
         } finally {
             GameManager.HideSplashScreen(this.scene, GameManager.HideSplashScreenDelay);
         }
     }
 }
 
-SceneManager.RegisterClass("FreeCameraMode", FreeCameraMode);
+SceneManager.RegisterClass("DemoGameMode", DemoGameMode);

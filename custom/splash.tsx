@@ -56,21 +56,22 @@ function SplashScreen() {
       const completed = data.completedAssets ?? 0;
       const total = data.totalAssets ?? 0;
       loadingFinishedRef.current = true;
-      setStatusText(formatLoadCompleteText(completed, total));
+      setStatusText("Please wait");
+      //setStatusText(formatLoadCompleteText(completed, total));
     };
 
-    const onSceneReady = (data: AssetProgressMessage) => {
-      setStatusText("Please wait");
-    };
+    //const onSceneReady = (data: AssetProgressMessage) => {
+    //  setStatusText("Please wait");
+    //};
 
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadProgress", onLoadProgress);
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadComplete", onLoadComplete);
-    GameManager.EventBus.OnMessage<AssetProgressMessage>("OnSceneReady", onSceneReady);
+    //GameManager.EventBus.OnMessage<AssetProgressMessage>("OnSceneReady", onSceneReady);
 
     return () => {
       GameManager.EventBus.RemoveHandler("OnLoadProgress", onLoadProgress);
       GameManager.EventBus.RemoveHandler("OnLoadComplete", onLoadComplete);
-      GameManager.EventBus.RemoveHandler("OnSceneReady", onSceneReady);
+      //GameManager.EventBus.RemoveHandler("OnSceneReady", onSceneReady);
     };
   }, []);
 

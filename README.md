@@ -1,6 +1,4 @@
-# React Framework Submodule
-
-The Babylon Toolkit React Framework submodule is a starting template for your project to enable the interactive scene viewer.
+# Babylon Toolkit React Framework Submodule
 
 To add submodule:
 ```
@@ -16,11 +14,11 @@ rm -rf .git/modules/src/babylon
 git commit -m "Removed babylon submodule"
 ```
 
-Note: Once the submodule has been added, to update, its best make sure any changes are backed up. Remove the submodule to clean add the submodule again to get new updates.
+Note: Once the submodule has been added, to update, its best make sure any changes are backed up. Remove the submodule to clean then add the submodule again to get new updates.
 
 ---
 
-# WEBGPU Script Engine Location
+# WEBGPU Public Script Web Assemblies (public/scripts)
 
 ```
 await webgpuEngine.initAsync(
@@ -28,3 +26,7 @@ await webgpuEngine.initAsync(
     { jsPath: "scripts/twgsl.js", wasmPath: "scripts/twgsl.wasm" }
 );
 ```
+
+---
+React UI Framework Documentation: https://github.com/codewrxai/agent-persona/blob/master/babylon-toolkit/react-framework.md
+---

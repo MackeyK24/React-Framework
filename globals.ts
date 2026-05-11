@@ -10,6 +10,7 @@ import { SceneManager, LocalMessageBus } from "@babylonjs-toolkit/next";
 // Preload Game Mode Side Effects
 import "./classes/DefaultGameMode"; 
 import "./classes/FreeCameraMode"; 
+import "./classes/DemoGameMode";
 
 class GameManager {
     /** Initialize the game runtime environment */
@@ -100,7 +101,6 @@ class GameManager {
     //         sceneFile: "samplescene.gltf",
     //         gameMode: "PlayerControllerDemo",
     //         importMeshes: ["playerarmature.gltf"],
-    //         hideSplashScreen: true
     //     },
     //     "",
     //     "/play"
