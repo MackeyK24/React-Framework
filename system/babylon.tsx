@@ -61,7 +61,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     let disposed = false;
     let disposeObserver = scene.onDisposeObservable.add(() => { disposed = true; });
     let hideSplashScreen = (autoHideSplashScreen === undefined || autoHideSplashScreen == null) ? true : autoHideSplashScreen; // Note: Default to true if not provided
-
+    let gameModeConctroller: ScriptComponent = null;
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // STEP 1 - Initialize the global runtime scene properties and react navigation system
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       let isDevelopment: boolean = process.env.NODE_ENV === "development";
       let defaultPageUrl: URL = new URL(window.location.href.replace("#?", "?"));
       let babylonRootPath: string = rootPath || "/scenes/";
-      let babylonSceneFile: string = sceneFile || "mainmenu.gltf";
+      let babylonSceneFile: string = sceneFile || null; // Note: Null will load blank scene
       let babylonGameMode:string | undefined = gameMode || "DefaultGameMode";
       let babylonAssetFiles:string[] | undefined = assetFiles;
       let babylonImportMeshes:string[] | undefined = importMeshes;
@@ -95,17 +95,13 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           babylonAuxiliaryData = defaultPageUrl.searchParams.get("aux") || babylonAuxiliaryData;
         }
       }
-      // Set the auxiliary data on the scene so that it can be accessed by any script or component that has a reference to the scene
-      if (babylonAuxiliaryData != null && babylonAuxiliaryData !== "") {
-        SceneManager.SetAuxiliaryData(scene, babylonAuxiliaryData);
-      }
-      // Instantiate Game Mode Script Component Before Loading Assets
+      // Instantiate Game Mode Script Component Before Loading Assets (Set Auxiliary Data As Script Component Property Bag)
       if (babylonGameMode != null && babylonGameMode !== "") {
         const ScriptComponentClass = Utilities.InstantiateClass(babylonGameMode);
         if (ScriptComponentClass != null) {
-            const scriptComponent: ScriptComponent = new ScriptComponentClass(new TransformNode("GameMode", scene), scene, {});
-            if (scriptComponent != null) {
-              SceneManager.AttachScriptComponent(scriptComponent, babylonGameMode, false);
+            gameModeConctroller = new ScriptComponentClass(new TransformNode("GameMode", scene), scene, babylonAuxiliaryData);
+            if (gameModeConctroller != null) {
+              SceneManager.AttachScriptComponent(gameModeConctroller, babylonGameMode, false);
             } else {
               Tools.Warn("Failed to instantiate script class: " + babylonGameMode);
             }
@@ -113,11 +109,15 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
             Tools.Warn("Failed to locate script class: " + babylonGameMode);
         }
       }
-      // Validate blank load case and bail out early if detected (Note: This allows the scene to be loaded without assets for quick testing of game mode logic, and also serves as a fallback if the asset loading fails for any reason since the progress callbacks won't fire in that case) 
-      if ((babylonRootPath != null && babylonRootPath !== "" && babylonRootPath.toLowerCase() === "_blank") || (babylonSceneFile != null && babylonSceneFile !== "" && babylonSceneFile.toLowerCase() === "_blank")) {
-          GameManager.EventBus.PostMessage("OnSceneReady", { scene, rootPath: babylonRootPath, sceneFile: babylonSceneFile });
-          if (hideSplashScreen) GameManager.HideSplashScreen(scene);
-          return; // Note: Bail Out Early
+      // Validate blank scene file case (Allow blank scene file names and bail out early if detected. This allows the scene to be loaded without assets.
+      if (babylonSceneFile == null || babylonSceneFile === "") {
+           if (gameModeConctroller != null) {
+              if (gameModeConctroller["onSceneReady"] != null && typeof gameModeConctroller["onSceneReady"] === "function") {
+                gameModeConctroller["onSceneReady"]();
+              }
+           }
+           if (hideSplashScreen) GameManager.HideSplashScreen(scene);
+           return; // Note: Bail Out Early
       }
       // Load runtime assets with SceneLoader to get byte-level progress callbacks.
       const totalTopLevelAssets: number = 1 + (babylonImportMeshes?.length || 0) + (babylonAssetFiles?.length || 0);
@@ -285,7 +285,11 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       } catch (e) {
         console.error("Failed to initialize game mode", e);
       } finally {
-        GameManager.EventBus.PostMessage("OnSceneReady", { scene, rootPath: babylonRootPath, sceneFile: babylonSceneFile });
+        if (gameModeConctroller != null) {
+          if (gameModeConctroller["onSceneReady"] != null && typeof gameModeConctroller["onSceneReady"] === "function") {
+            gameModeConctroller["onSceneReady"]();
+          }
+        }
       }
     } catch (error) {
       console.error("Failed to load babylon scene assets", error);

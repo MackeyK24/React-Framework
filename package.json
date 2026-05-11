@@ -1,0 +1,36 @@
+{
+    "name": "@babylonjs-toolkit/react",
+    "version": "1.0.0",
+    "description": "Babylon Toolkit React Framework (ES6)",
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "babylonjs",
+        "babylontoolkit",
+        "development",
+        "games",
+        "unity",
+        "webgl",
+        "gltf"
+    ],
+    "files": [
+        "classes/**/*",
+        "custom/**/*",
+        "system/**/*",
+        "globals.ts",
+        "package.json",
+        "README.md"
+    ],
+    "peerDependencies": {
+        "@babylonjs-toolkit/next": "^9.5.0",
+        "@babylonjs/gui": "^9.5.0",
+        "@babylonjs/core": "^9.5.0",
+        "@babylonjs/havok": "^1.3.10",
+        "@babylonjs/loaders": "^9.5.0",
+        "@babylonjs/materials": "^9.5.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
+        "react-router-dom": "^7.15.0"
+    }
+}

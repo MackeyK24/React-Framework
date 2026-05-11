@@ -1,29 +1,62 @@
 import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core";
-import { SceneManager, ScriptComponent, LocalMessageBus } from "@babylonjs-toolkit/next";
+import { SceneManager, ScriptComponent, LocalMessageBus, GameModeController } from "@babylonjs-toolkit/next";
 import GameManager from "../globals";
 
-export class DefaultGameMode extends ScriptComponent {
-    private readonly onSceneReadyHandler = (data: any) => { this.onSceneReady(data); };
-
+export class DefaultGameMode extends GameModeController {
+    
     constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "DefaultGameMode") {
         super(transform, scene, properties, alias);
-        GameManager.EventBus.OnMessage("OnSceneReady", this.onSceneReadyHandler);
     }
 
-    protected onSceneReady(data: any): void {
-        setTimeout(() => { // Note: Timeout is a workaround to ensure this runs after the scene ready event processing completes
-            this.finishSceneReady(data);
-        }, 1000);
+    protected awake(): void {
+        /* Init component function */
     }
 
-    protected finishSceneReady(data: any): void {
-        console.log("DefaultGameMode - Ready");
+    protected start(): void {
+        /* Start component function */
     }
 
-    public override dispose(): void {
-        GameManager.EventBus.RemoveHandler("OnSceneReady", this.onSceneReadyHandler);
-        super.dispose();
+    protected ready(): void {
+        /* Execute when ready function */
+    }
+
+    protected update(): void {
+        /* Update render loop function */
+    }
+
+    protected late(): void {
+        /* Late update render loop function */
+    }
+
+    protected step(): void {
+        /* Before physics step function (remove empty function for performance) */
+    }
+
+    protected fixed(): void {
+        /* After physics step function (remove empty function for performance) */
+    }
+
+    protected after(): void {
+        /* After update render loop function */
+    }
+
+    protected reset(): void {
+        /* Reset component function */
+    }
+
+    protected destroy(): void {
+        /* Destroy component function */
+    }
+
+    /* Game Mode Controller Functions */
+
+    protected onSceneReady(): void {
+        setTimeout(() => {
+
+            console.log("DefaultGameMode - Ready");
+
+        }, 1000); // Note: Timeout is ensure this runs after the main scene ready event processing completes
     }
 }
 
