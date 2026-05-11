@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from "react";
-import { useUnifiedNavigation } from "../babylon/system/platform";
+import { useUnifiedNavigation } from "./platform";
 
 interface ApplicationRouteProps {
   children: React.ReactNode;
