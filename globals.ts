@@ -10,8 +10,9 @@ import { INavigationState, UnifiedNavigateFunction, UnifiedNavigationOptions } f
 
 // Preload Game Mode Side Effects
 import "./classes/DefaultGameMode"; 
-import "./classes/FreeCameraMode"; 
 import "./classes/DemoGameMode";
+import "./classes/FreeCameraMode"; 
+import "./classes/PlaygroundExample";
 
 class GameManager {
     /** Initialize the game runtime environment */

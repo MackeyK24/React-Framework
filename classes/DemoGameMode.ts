@@ -10,51 +10,10 @@ export class DemoGameMode extends GameModeController {
     constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "DemoGameMode") {
         super(transform, scene, properties, alias);
     }
-
-    protected awake(): void {
-        /* Init component function */
-    }
-
-    protected start(): void {
-        /* Start component function */
-    }
-
-    protected ready(): void {
-        /* Execute when ready function */
-    }
-
-    protected update(): void {
-        /* Update render loop function */
-    }
-
-    protected late(): void {
-        /* Late update render loop function */
-    }
-
-    protected step(): void {
-        /* Before physics step function (remove empty function for performance) */
-    }
-
-    protected fixed(): void {
-        /* After physics step function (remove empty function for performance) */
-    }
-
-    protected after(): void {
-        /* After update render loop function */
-    }
-
-    protected reset(): void {
-        /* Reset component function */
-    }
-
-    protected destroy(): void {
-        /* Destroy component function */
-    }
-
-    /* Game Mode Controller Functions */
     
     protected async createScene(props: SceneViewerProps): Promise<void> {
         try {
+
             /** Initialize the demo player controller game mode */
             const player = this.scene.getNodeByName("PlayerArmature") as TransformNode;
             if (player != null) {
@@ -65,6 +24,7 @@ export class DemoGameMode extends GameModeController {
                 controller.walkSpeed = 2.0;
                 controller.jumpSpeed = 12.0;
             }
+
         } catch (e) {
             console.error("Failed to initialize demo game mode", e);
         } finally {

@@ -50,11 +50,11 @@ export class DefaultGameMode extends GameModeController {
         /* Destroy component function */
     }
 
-    /* Game Mode Controller Functions */
-    
     protected async createScene(props: SceneViewerProps): Promise<void> {
         try {
-            /** Game mode initialization here */
+
+            /* Game mode initialization here */
+            
         } catch (e) {
             console.error("Failed to initialize default game mode", e);
         } finally {
