@@ -53,7 +53,7 @@ type AssetProgressMessage = {
 
 function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes<HTMLCanvasElement>) {
   const { fullPage, gameMode, rootPath, sceneFile, assetFiles, importMeshes, auxiliaryData, allowQueryParams, enableCustomOverlay  } = props;
-  const { navigate, location } = useUnifiedNavigation();
+  const { location } = useUnifiedNavigation();
   const createScene = useCallback(async (scene:Scene) => {
     if (scene.isDisposed) return; // Note: Strict mode safety
     let disposed = false;
@@ -66,7 +66,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     try {
       GameManager.ShowSplashScreen(); // Note: Always Show Game Manager Splash Screen
-      await GameManager.InitializeRuntime(scene, navigate, true, false, false);
+      await GameManager.InitializeRuntime(scene, true, false, false);
       if (disposed || scene.isDisposed) return; // Note: Strict mode safety
     
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         console.error("Failed to initialize game mode", e);
       }
     }
-  }, [rootPath, gameMode, sceneFile, assetFiles, importMeshes, auxiliaryData, allowQueryParams, navigate, location]);
+  }, [rootPath, gameMode, sceneFile, assetFiles, importMeshes, auxiliaryData, allowQueryParams, location]);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   // OPTIONAL: Add custom loading div over the root div and disable the default loading screen

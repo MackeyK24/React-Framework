@@ -15,7 +15,7 @@ import "./classes/DemoGameMode";
 
 class GameManager {
     /** Initialize the game runtime environment */
-    public static async InitializeRuntime(scene:Scene, navigateToFunction: UnifiedNavigateFunction | null = null, enablePhysics:boolean = true, showLoadingScreen:boolean = true, hideEngineLoadingUI:boolean = false): Promise<void> {
+    public static async InitializeRuntime(scene:Scene, enablePhysics:boolean = true, showLoadingScreen:boolean = true, hideEngineLoadingUI:boolean = false): Promise<void> {
         if (scene.isDisposed) return; // Note: Strict mode safety
         await SceneManager.InitializeRuntime(scene.getEngine(), { showDefaultLoadingScreen: showLoadingScreen, hideLoadingUIWithEngine: hideEngineLoadingUI });
         if (GameManager.IsDevelopmentMode) await import("@babylonjs/inspector");
@@ -24,9 +24,6 @@ class GameManager {
         await import("@babylonjs-toolkit/dlc/MobileInputController");
         await import("@babylonjs-toolkit/dlc/ThirdPersonPlayerController");
         if (scene.isDisposed) return; // Note: Strict mode safety
-
-        // Set React Navigation Hook
-        GameManager.SetReactNavigationHook(navigateToFunction);
 
         // Havok is only loaded once globally AFTER SceneManager.InitializeRuntime
         if (enablePhysics)

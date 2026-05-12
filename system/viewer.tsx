@@ -159,9 +159,8 @@ function BaseSceneViewer(props: BabylonjsProps & React.CanvasHTMLAttributes<HTML
               try { GameManager.HideSplashScreen(scene); } catch (e) { console.warn(e); }
           }
 
-          if (scene) {
-              try { GameManager.DeleteReactNavigationHook(); } catch (e) { console.warn(e); }
-          }
+          // Note: The React navigation hook is owned by ReactRouterNavAdapter (app-wide),
+          // so it is intentionally NOT deleted here when the scene viewer unmounts.
 
           if (scene && !scene.isDisposed) {
               try { scene.dispose(); } catch (e) { console.warn(e); }
