@@ -1,8 +1,6 @@
-import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core";
-import { SceneManager, ScriptComponent, LocalMessageBus, GameModeController } from "@babylonjs-toolkit/next";
-import { SceneViewerProps } from "../system/babylon";
-import GameManager from "../globals";
+import { Scene } from "@babylonjs/core/scene";
+import { SceneManager, GameModeController } from "@babylonjs-toolkit/next";
 
 export class DefaultGameMode extends GameModeController {
     
@@ -50,16 +48,8 @@ export class DefaultGameMode extends GameModeController {
         /* Destroy component function */
     }
 
-    protected async createScene(props: SceneViewerProps): Promise<void> {
-        try {
-
-            /* Game mode initialization here */
-            
-        } catch (e) {
-            console.error("Failed to initialize default game mode", e);
-        } finally {
-            GameManager.HideSplashScreen(this.scene, GameManager.HideSplashScreenDelay);
-        }
+    protected async createScene(props: any): Promise<void> {
+        /* Create scene content here */
     }
 }
 

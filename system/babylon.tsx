@@ -74,7 +74,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     // STEP 1 - Initialize the global runtime scene properties and react navigation system
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     try {
-      GameManager.ShowSplashScreen(); // Note: Always Show Game Manager Splash Screen
+      SceneManager.ShowSplashScreen(); // Note: Always Show Game Manager Splash Screen
       await GameManager.InitializeRuntime(scene, true, false, false);
       if (disposed || scene.isDisposed) return; // Note: Strict mode safety
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           }
         }
       }
-      let babylonRootPath: string = rootPath || GameManager.AwsPlaygroundRepo; // Note: Default to AWS Playground Repo
+      let babylonRootPath: string = rootPath || GameManager.PlaygroundRepo; // Note: Default to AWS Playground Repo
       let babylonSceneFile: string = sceneFile || "_blank";
       // Instantiate Game Mode Script Component Before Loading Assets (Set Auxiliary Data As Script Component Property Bag)
       if (babylonGameMode != null && babylonGameMode !== "") {

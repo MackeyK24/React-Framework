@@ -18,7 +18,7 @@ Note: Once the submodule has been added, to update, its best make sure any chang
 
 ---
 
-# WEBGPU Public Script Web Assemblies (public/scripts)
+# WEBGPU Public Web Assemblies (public/scripts)
 
 ```
 await webgpuEngine.initAsync(

@@ -1,9 +1,7 @@
-import { Scene } from "@babylonjs/core/scene";
 import { TransformNode } from "@babylonjs/core";
-import { SceneManager, ScriptComponent, LocalMessageBus, GameModeController } from "@babylonjs-toolkit/next";
+import { Scene } from "@babylonjs/core/scene";
+import { SceneManager, GameModeController } from "@babylonjs-toolkit/next";
 import { ThirdPersonPlayerController } from "@babylonjs-toolkit/dlc";
-import { SceneViewerProps } from "../system/babylon";
-import GameManager from "../globals";
 
 export class DemoGameMode extends GameModeController {
     
@@ -11,24 +9,16 @@ export class DemoGameMode extends GameModeController {
         super(transform, scene, properties, alias);
     }
     
-    protected async createScene(props: SceneViewerProps): Promise<void> {
-        try {
-
-            /** Initialize the demo player controller game mode */
-            const player = this.scene.getNodeByName("PlayerArmature") as TransformNode;
-            if (player != null) {
-                const controller = new ThirdPersonPlayerController(player, this.scene, { arrowKeyRotation: true, smoothMotionSpeed:true, smoothChangeRate: 25.0 });
-                controller.enableInput = true;
-                controller.attachCamera = true;
-                controller.moveSpeed = 5.335;
-                controller.walkSpeed = 2.0;
-                controller.jumpSpeed = 12.0;
-            }
-
-        } catch (e) {
-            console.error("Failed to initialize demo game mode", e);
-        } finally {
-            GameManager.HideSplashScreen(this.scene, GameManager.HideSplashScreenDelay);
+    protected async createScene(props: any): Promise<void> {
+        // Initialize the third person player controller
+        const player = this.scene.getNodeByName("PlayerArmature") as TransformNode;
+        if (player != null) {
+            const controller = new ThirdPersonPlayerController(player, this.scene, { arrowKeyRotation: true, smoothMotionSpeed:true, smoothChangeRate: 25.0 });
+            controller.enableInput = true;
+            controller.attachCamera = true;
+            controller.moveSpeed = 5.335;
+            controller.walkSpeed = 2.0;
+            controller.jumpSpeed = 12.0;
         }
     }
 }

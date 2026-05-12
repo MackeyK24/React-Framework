@@ -56,63 +56,6 @@ class GameManager {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Splash Screen State
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /** Show the splash screen */
-    public static ShowSplashScreen(): void {
-        const splash = document.getElementById("xbabylonjsSplashScreen");
-        if (splash) splash.style.display = "block";
-    }
-    /** Hide the splash screen with optional delay and fade effect */
-    public static HideSplashScreen(scene: Scene = null, delay: number = 0): void {
-        setTimeout(() => {
-            if (scene != null && !scene.isDisposed) {
-                SceneManager.HideLoadingScreen(scene.getEngine());
-                SceneManager.FocusRenderCanvas(scene);
-            }
-            const splash = document.getElementById("xbabylonjsSplashScreen");
-            if (splash) {
-                splash.style.opacity = "0";
-                const onFadeEnd = () => {
-                    splash.style.display = "none";
-                    splash.removeEventListener("transitionend", onFadeEnd);
-                };
-                splash.addEventListener("transitionend", onFadeEnd);
-            }
-        }, delay);
-    }
-    /** Update the status text on the splash screen (Direct Access Hack) */
-    public static UpdateSplashScreenStatus(text: string): void {
-        const splash = document.getElementById("xbabylonjsSplashScreen");
-        if (splash) {
-            splash.style.display = "block";
-            const status = splash.querySelector("#xbabylonjsStatusTextDiv");
-            if (status) status.textContent = text;
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Window Location State
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Sets the window location to navigate to a new route.
-     * @param route The route path to navigate.
-     * @param options The navigation options.
-     * @optional Use { replace: true } in nav options to replace current history entry instead of pushing a new one.
-     * @example GameManager.SetWindowLocation("/play?scene=samplescene.gltf&mode=FreeCameraMode", { replace: true });
-     */
-    public static SetWindowLocation(route: string, options: any = null): void {
-        // Note: Force Full Page Reload Navigation
-        if (options?.replace === true) {
-            window.location.replace(route);
-        } else {
-            window.location.assign(route);
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Global Navigation State
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +68,7 @@ class GameManager {
      * @example
     * GameManager.NavigateTo("/play", {
     *     gameMode: "DefaultGameMode",
-    *     sceneUrl: GameManager.AwsPlaygroundRepo + "samplescene.gltf",
+    *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
     * });
      */
     public static NavigateTo(route: string, state: INavigationState | null = null): void {
@@ -215,17 +158,12 @@ class GameManager {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // AWS Playground Repo
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public static get AwsPlaygroundRepo(): string { return "https://dlyp4oy8lme1v.cloudfront.net/playground/"; }
+    public static get PlaygroundRepo(): string { return "https://dlyp4oy8lme1v.cloudfront.net/playground/"; }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Development Mode Flag
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static get IsDevelopmentMode(): boolean { return process.env.NODE_ENV === "development"; }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Configuration Constants
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public static get HideSplashScreenDelay(): number { return 1000; }
 }
 export enum StorageType { Local = 0, Session = 1 }
 
