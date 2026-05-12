@@ -53,7 +53,7 @@ export class DemoGameMode extends GameModeController {
 
     /* Game Mode Controller Functions */
     
-    protected async onSceneReady(props: SceneViewerProps): Promise<void> {
+    protected async createScene(props: SceneViewerProps): Promise<void> {
         try {
             /** Initialize the demo player controller game mode */
             const player = this.scene.getNodeByName("PlayerArmature") as TransformNode;

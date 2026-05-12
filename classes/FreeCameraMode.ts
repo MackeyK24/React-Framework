@@ -56,7 +56,7 @@ export class FreeCameraMode extends GameModeController {
 
     /* Game Mode Controller Functions */
     
-    protected async onSceneReady(props: SceneViewerProps): Promise<void> {
+    protected async createScene(props: SceneViewerProps): Promise<void> {
         try {
             /** Initialize free camera mode */
             this.camera = new FreeCamera("FreeCamera", new Vector3(0, 5, -10), this.scene);

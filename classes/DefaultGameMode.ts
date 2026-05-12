@@ -52,7 +52,7 @@ export class DefaultGameMode extends GameModeController {
 
     /* Game Mode Controller Functions */
     
-    protected async onSceneReady(props: SceneViewerProps): Promise<void> {
+    protected async createScene(props: SceneViewerProps): Promise<void> {
         try {
             /** Game mode initialization here */
         } catch (e) {

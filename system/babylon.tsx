@@ -64,9 +64,9 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     const invokeGameModeReady = async (): Promise<void> => {
       if (gameModeReadyInvoked || disposed || scene.isDisposed) return;
       if (gameModeController != null) {
-        if (gameModeController["initSceneReady"] != null && typeof gameModeController["initSceneReady"] === "function") {
+        if (gameModeController["preCreateScene"] != null && typeof gameModeController["preCreateScene"] === "function") {
           gameModeReadyInvoked = true;
-          await gameModeController["initSceneReady"](gameModeAuxiliaryData);
+          await gameModeController["preCreateScene"](gameModeAuxiliaryData);
         }
       }
     };
