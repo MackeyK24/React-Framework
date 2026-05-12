@@ -122,11 +122,10 @@ class GameManager {
      * @param state Optional navigation state to pass to the destination route.
      *
      * @example
-     * GameManager.NavigateTo("/play", {
-     *     gameMode: "DefaultGameMode",
-     *     rootPath: GameManager.AwsPlaygroundRepo,
-     *     sceneFile: "samplescene.gltf",
-     * });
+    * GameManager.NavigateTo("/play", {
+    *     gameMode: "DefaultGameMode",
+    *     sceneUrl: GameManager.AwsPlaygroundRepo + "samplescene.gltf",
+    * });
      */
     public static NavigateTo(route: string, state: INavigationState | null = null): void {
         //////////////////////////////////////////////////////////////////////////////////////////////////////              

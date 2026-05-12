@@ -18,8 +18,7 @@ interface ApplicationRouteProps {
  * @example
  * GameManager.NavigateTo("/play", {
  *     gameMode: "DefaultGameMode",
- *     rootPath: GameManager.AwsPlaygroundRepo,
- *     sceneFile: "samplescene.gltf",
+ *     sceneUrl: GameManager.AwsPlaygroundRepo + "samplescene.gltf",
  * });
  */
 export default function ApplicationRoute({ children, redirectTo = '/', allowDevMode = false }: ApplicationRouteProps) {

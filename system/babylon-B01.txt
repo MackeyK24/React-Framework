@@ -49,6 +49,7 @@ type AssetProgressMessage = {
 /**
  * ES6 Interactive Babylon Toolkit Scene Viewer (GLTF)
  */
+
 function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes<HTMLCanvasElement>) {
   const { fullPage, gameMode, sceneUrl, assetFiles, importMeshes, auxiliaryData, allowQueryParams, enableCustomOverlay  } = props;
   const { location } = useUnifiedNavigation();
@@ -60,6 +61,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     let sceneFile: string | null = sceneUrl != null && sceneUrl !== "" ? sceneUrl.substring(sceneUrl.lastIndexOf("/") + 1) : null;
     let gameModeController: ScriptComponent = null;
     let gameModeAuxiliaryData:string | undefined = auxiliaryData;
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // STEP 1 - Initialize the global runtime scene properties and react navigation system
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +69,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       GameManager.ShowSplashScreen(); // Note: Always Show Game Manager Splash Screen
       await GameManager.InitializeRuntime(scene, true, false, false);
       if (disposed || scene.isDisposed) return; // Note: Strict mode safety
+
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
       // STEP 2 - Load the babylon scene assets (GLTF) using the toolkit assets manager
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,6 +124,18 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
            }
            return; // Note: Bail Out Early
       }
+
+
+
+
+
+
+
+
+
+
+
+
       // Load runtime assets with SceneLoader to get byte-level progress callbacks.
       const totalTopLevelAssets: number = 1 + (babylonImportMeshes?.length || 0) + (babylonAssetFiles?.length || 0);
       let completedTopLevelAssets: number = 0;
@@ -271,6 +286,22 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         overallPercent: totalTopLevelAssets > 0 ? (completedTopLevelAssets / totalTopLevelAssets) * 100 : 100,
         message: `Load complete: ${completedTopLevelAssets}/${totalTopLevelAssets} assets`
       });
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
       if (disposed || scene.isDisposed) return; // Note: Strict mode safety
     } catch (error) {
       console.error("Failed to load babylon scene assets", error);
@@ -292,7 +323,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           scene.onDisposeObservable.remove(disposeObserver);
         }
       } catch (e) {
-        console.error("Failed to remove dispose observer", e);
+        console.error("Failed to initialize game mode", e);
       }
     }
   }, [gameMode, sceneUrl, assetFiles, importMeshes, auxiliaryData, allowQueryParams, location]);
