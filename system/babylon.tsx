@@ -72,8 +72,6 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       ////////////////////////////////////////////////////////////////////////////////////////////////////////
       let isDevelopment: boolean = process.env.NODE_ENV === "development";
       let defaultPageUrl: URL = new URL(window.location.href.replace("#?", "?"));
-      let babylonRootPath: string = rootPath || GameManager.AwsPlaygroundRepo; // Note: Default to AWS Playground Repo
-      let babylonSceneFile: string = sceneFile || "_blank";
       let babylonGameMode:string | undefined = gameMode || "DefaultGameMode";
       let babylonAssetFiles:string[] | undefined = assetFiles;
       let babylonImportMeshes:string[] | undefined = importMeshes;
@@ -82,8 +80,11 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         // Unified Navigation Adapter Support (React Router, Next.js, Remix, etc.)
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         babylonGameMode = location?.state?.gameMode || babylonGameMode;
-        babylonRootPath = location?.state?.rootPath || babylonRootPath;
-        babylonSceneFile = location?.state?.sceneFile || babylonSceneFile;
+        let locSceneUrl = location?.state?.sceneUrl || null;
+        if (locSceneUrl != null && locSceneUrl !== "") {
+          rootPath = locSceneUrl.substring(0, locSceneUrl.lastIndexOf("/") + 1);
+          sceneFile = locSceneUrl.substring(locSceneUrl.lastIndexOf("/") + 1);
+        }
         babylonAssetFiles = location?.state?.assetFiles || babylonAssetFiles;
         babylonImportMeshes = location?.state?.importMeshes || babylonImportMeshes;
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,11 +94,13 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           babylonGameMode = defaultPageUrl.searchParams.get("mode") || babylonGameMode;
           let devSceneUrl = defaultPageUrl.searchParams.get("scene") || null;
           if (devSceneUrl != null && devSceneUrl !== "") {
-            babylonRootPath = devSceneUrl.substring(0, devSceneUrl.lastIndexOf("/") + 1);
-            babylonSceneFile = devSceneUrl.substring(devSceneUrl.lastIndexOf("/") + 1);
+            rootPath = devSceneUrl.substring(0, devSceneUrl.lastIndexOf("/") + 1);
+            sceneFile = devSceneUrl.substring(devSceneUrl.lastIndexOf("/") + 1);
           }
         }
       }
+      let babylonRootPath: string = rootPath || GameManager.AwsPlaygroundRepo; // Note: Default to AWS Playground Repo
+      let babylonSceneFile: string = sceneFile || "_blank";
       // Instantiate Game Mode Script Component Before Loading Assets (Set Auxiliary Data As Script Component Property Bag)
       if (babylonGameMode != null && babylonGameMode !== "") {
         const ScriptComponentClass = Utilities.InstantiateClass(babylonGameMode);
