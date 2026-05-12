@@ -156,7 +156,7 @@ function BaseSceneViewer(props: BabylonjsProps & React.CanvasHTMLAttributes<HTML
           if (engine) {
               try { engine.stopRenderLoop(); } catch (e) { console.warn(e); }
               try { SceneManager.HideLoadingScreen(engine, false); } catch (e) { console.warn(e); }
-              try { GameManager.HideSplashScreen(scene); } catch (e) { console.warn(e); }
+              try { SceneManager.HideSplashScreen(scene); } catch (e) { console.warn(e); }
           }
 
           // Note: The React navigation hook is owned by ReactRouterNavAdapter (app-wide),

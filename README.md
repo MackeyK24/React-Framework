@@ -20,6 +20,8 @@ Note: Once the submodule has been added, to update, its best make sure any chang
 
 # WEBGPU Public Web Assemblies (public/scripts)
 
+The required `glslang` and `twgsl` web assemblies **must** reside in the application scripts folder:
+
 ```
 await webgpuEngine.initAsync(
     { jsPath: "scripts/glslang.js", wasmPath: "scripts/glslang.wasm" },
