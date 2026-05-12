@@ -60,6 +60,16 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     let sceneFile: string | null = sceneUrl != null && sceneUrl !== "" ? sceneUrl.substring(sceneUrl.lastIndexOf("/") + 1) : null;
     let gameModeController: ScriptComponent = null;
     let gameModeAuxiliaryData:string | undefined = auxiliaryData;
+    let gameModeReadyInvoked: boolean = false;
+    const invokeGameModeReady = async (): Promise<void> => {
+      if (gameModeReadyInvoked || disposed || scene.isDisposed) return;
+      if (gameModeController != null) {
+        if (gameModeController["initSceneReady"] != null && typeof gameModeController["initSceneReady"] === "function") {
+          gameModeReadyInvoked = true;
+          await gameModeController["initSceneReady"](gameModeAuxiliaryData);
+        }
+      }
+    };
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     // STEP 1 - Initialize the global runtime scene properties and react navigation system
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,12 +127,8 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       }
       // Validate blank scene file case (Allow blank scene file names and bail out early if detected. This allows the scene to be loaded without assets.
       if (babylonSceneFile == null || babylonSceneFile === "" || (babylonSceneFile != null && (babylonSceneFile.toLowerCase() === "_blank" || babylonSceneFile.toLowerCase() === "blank") || babylonSceneFile.toLowerCase() === "none")) {
-           if (gameModeController != null) {
-              if (gameModeController["onSceneReady"] != null && typeof gameModeController["onSceneReady"] === "function") {
-                await gameModeController["onSceneReady"](gameModeAuxiliaryData);
-              }
-           }
-           return; // Note: Bail Out Early
+        await invokeGameModeReady();
+        return; // Note: Bail Out Early
       }
       // Load runtime assets with SceneLoader to get byte-level progress callbacks.
       const totalTopLevelAssets: number = 1 + (babylonImportMeshes?.length || 0) + (babylonAssetFiles?.length || 0);
@@ -282,11 +288,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       // STEP 3 - Finalize scene setup after assets are loaded and hide the loading screen
       /////////////////////////////////////////////////////////////////////////////////////////////////////
       try {
-        if (gameModeController != null) {
-          if (gameModeController["onSceneReady"] != null && typeof gameModeController["onSceneReady"] === "function") {
-            await gameModeController["onSceneReady"](gameModeAuxiliaryData);
-          }
-        }
+        await invokeGameModeReady();
       } catch (e) {
         console.error("Failed to initialize game mode", e);
       }

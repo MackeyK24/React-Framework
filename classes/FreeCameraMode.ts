@@ -55,17 +55,8 @@ export class FreeCameraMode extends GameModeController {
     }
 
     /* Game Mode Controller Functions */
-
+    
     protected async onSceneReady(props: SceneViewerProps): Promise<void> {
-        setTimeout(async () => {
-
-            console.log("FreeCameraMode - Ready");
-            await this.initializeGameMode(props);
-
-        }, 1000); // Note: Timeout is ensure this runs after the main scene ready event processing completes
-    }
-
-    protected async initializeGameMode(props: SceneViewerProps): Promise<void> {
         try {
             /** Initialize free camera mode */
             this.camera = new FreeCamera("FreeCamera", new Vector3(0, 5, -10), this.scene);
