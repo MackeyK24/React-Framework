@@ -56,12 +56,12 @@ function SplashScreen() {
       const completed = data.completedAssets ?? 0;
       const total = data.totalAssets ?? 0;
       loadingFinishedRef.current = true;
-      setStatusText("Please wait");
+      setStatusText("Please Wait");
       //setStatusText(formatLoadCompleteText(completed, total));
     };
 
     //const onSceneReady = (data: AssetProgressMessage) => {
-    //  setStatusText("Please wait");
+    //  setStatusText("Please Wait");
     //};
 
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadProgress", onLoadProgress);
