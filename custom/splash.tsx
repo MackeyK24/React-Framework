@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from "react";
+import { babylonLogo, spinnerLogo } from "./loading";
 import GameManager from "../globals";
 import "./splash.css";
 
@@ -23,8 +24,8 @@ type AssetProgressMessage = {
 };
 
 function SplashScreen() {
-  const logoSrc = "https://cdn.babylonjs.com/Assets/babylonLogo.png";
-  const spinnerSrc = "https://cdn.babylonjs.com/Assets/loadingIcon.png";
+  const logoSrc = babylonLogo;
+  const spinnerSrc = spinnerLogo;
   const [statusText, setStatusText] = useState<string>("Loading...");
   const loadingFinishedRef = useRef<boolean>(false);
 
@@ -57,21 +58,14 @@ function SplashScreen() {
       const total = data.totalAssets ?? 0;
       loadingFinishedRef.current = true;
       setStatusText("Please Wait");
-      //setStatusText(formatLoadCompleteText(completed, total));
     };
-
-    //const onSceneReady = (data: AssetProgressMessage) => {
-    //  setStatusText("Please Wait");
-    //};
 
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadProgress", onLoadProgress);
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadComplete", onLoadComplete);
-    //GameManager.EventBus.OnMessage<AssetProgressMessage>("OnSceneReady", onSceneReady);
 
     return () => {
       GameManager.EventBus.RemoveHandler("OnLoadProgress", onLoadProgress);
       GameManager.EventBus.RemoveHandler("OnLoadComplete", onLoadComplete);
-      //GameManager.EventBus.RemoveHandler("OnSceneReady", onSceneReady);
     };
   }, []);
 
