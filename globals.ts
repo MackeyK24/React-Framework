@@ -9,23 +9,28 @@ import { SceneManager, LocalMessageBus } from "@babylonjs-toolkit/next";
 import { INavigationState, UnifiedNavigateFunction, UnifiedNavigationOptions } from "./system/platform";
 
 // Preload Game Mode Side Effects
-import "./classes/DefaultGameMode"; 
-import "./classes/DemoGameMode";
-import "./classes/FreeCameraMode"; 
-import "./classes/PlaygroundExample";
+// import "./classes/DefaultGameMode"; 
+// import "./classes/DemoGameMode";
+// import "./classes/FreeCameraMode"; 
+// import "./classes/PlaygroundExample";
 
 class GameManager {
     /** Initialize the game runtime environment */
     public static async InitializeRuntime(scene:Scene, enablePhysics:boolean = true, showLoadingScreen:boolean = true, hideEngineLoadingUI:boolean = false): Promise<void> {
         if (scene.isDisposed) return; // Note: Strict mode safety
         await SceneManager.InitializeRuntime(scene.getEngine(), { showDefaultLoadingScreen: showLoadingScreen, hideLoadingUIWithEngine: hideEngineLoadingUI });
+        // Note: Import default classes and game modes with side effects to register them in the game mode factory for easy use in scenes.
         if (GameManager.IsDevelopmentMode) await import("@babylonjs/inspector");
         await import("@babylonjs-toolkit/dlc/DebugInformation");
         await import("@babylonjs-toolkit/dlc/DefaultCameraSystem");
         await import("@babylonjs-toolkit/dlc/MobileInputController");
         await import("@babylonjs-toolkit/dlc/ThirdPersonPlayerController");
+        // Note: Additional game modes can be imported here or dynamically loaded within scenes as needed for faster initial load times.
+        await import("./classes/DefaultGameMode");
+        await import("./classes/DemoGameMode");
+        await import("./classes/FreeCameraMode");
+        await import("./classes/PlaygroundExample");
         if (scene.isDisposed) return; // Note: Strict mode safety
-
         // Havok is only loaded once globally AFTER SceneManager.InitializeRuntime
         if (enablePhysics)
         {
@@ -156,13 +161,13 @@ class GameManager {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // AWS Playground Repo
+    // Development Properties
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /** URL of the playground repository (https://dlyp4oy8lme1v.cloudfront.net/playground/) */
     public static get PlaygroundRepo(): string { return "https://dlyp4oy8lme1v.cloudfront.net/playground/"; }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Development Mode Flag
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /** Indicates if the game is running in development mode */
     public static get IsDevelopmentMode(): boolean { return process.env.NODE_ENV === "development"; }
 }
 export enum StorageType { Local = 0, Session = 1 }
