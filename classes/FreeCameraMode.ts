@@ -17,7 +17,7 @@ export class FreeCameraMode extends GameModeController {
     }
     
     protected async createScene(props: any): Promise<void> {
-        // Initialize a free camera for the scene
+        // Create a free camera for the scene
         this.camera = new FreeCamera("FreeCamera", new Vector3(0, 5, -10), this.scene);
         const canvas = this.scene.getEngine().getRenderingCanvas();
         if (canvas)this.camera.attachControl(canvas, true);

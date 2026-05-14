@@ -27,46 +27,14 @@ function SplashScreen() {
   const logoSrc = babylonLogo;
   const spinnerSrc = spinnerLogo;
   const [statusText, setStatusText] = useState<string>("Loading...");
-  const loadingFinishedRef = useRef<boolean>(false);
-
   useEffect(() => {
-    const formatLoadingText = (completed: number, total: number): string => {
-      if (total > 0) {
-        const current = Math.min(completed + 1, total);
-        return `Loading ${current} of ${total}`;
-      }
-      return "Loading...";
-    };
-
-    const formatLoadCompleteText = (completed: number, total: number): string => {
-      if (total > 0) {
-        const finalCount = Math.max(Math.min(completed, total), total);
-        return `Loading ${finalCount} of ${total}`;
-      }
-      return "Loading...";
-    };
-
     const onLoadProgress = (data: AssetProgressMessage) => {
       const completed = data.completedAssets ?? 0;
       const total = data.totalAssets ?? 0;
-      loadingFinishedRef.current = false;
-      setStatusText(formatLoadingText(completed, total));
+      setStatusText(data.message);
     };
-
-    const onLoadComplete = (data: AssetProgressMessage) => {
-      const completed = data.completedAssets ?? 0;
-      const total = data.totalAssets ?? 0;
-      loadingFinishedRef.current = true;
-      setStatusText("Please Wait");
-    };
-
     GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadProgress", onLoadProgress);
-    GameManager.EventBus.OnMessage<AssetProgressMessage>("OnLoadComplete", onLoadComplete);
-
-    return () => {
-      GameManager.EventBus.RemoveHandler("OnLoadProgress", onLoadProgress);
-      GameManager.EventBus.RemoveHandler("OnLoadComplete", onLoadComplete);
-    };
+    return () => { GameManager.EventBus.RemoveHandler("OnLoadProgress", onLoadProgress); };
   }, []);
 
   return (

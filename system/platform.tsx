@@ -18,8 +18,6 @@ import { createContext, createElement, useContext, ReactNode } from "react";
 export interface INavigationState {
     gameMode?: string;
     sceneUrl?: string;
-    assetFiles?: string[];
-    importMeshes?: string[];
     auxiliaryData?: string;
 }
 

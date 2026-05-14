@@ -6,7 +6,7 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Nullable } from "@babylonjs/core/types";
 import { Observer } from "@babylonjs/core/Misc/observable";
 import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
-import { ISceneLoaderProgressEvent, ImportMeshAsync, LoadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
+import { ISceneLoaderProgressEvent, ImportMeshAsync } from "@babylonjs/core/Loading/sceneLoader";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import { SceneManager, ScriptComponent, Utilities } from "@babylonjs-toolkit/next";
 import { useCallback } from "react";
@@ -21,14 +21,12 @@ export declare type SceneViewerProps = {
   fullPage?: boolean;
   gameMode?: string;
   sceneUrl?: string;
-  assetFiles?: string[];
-  importMeshes?: string[];
-  auxiliaryData?: any;
+  auxiliaryData?: string;
   allowQueryParams?: boolean;
   enableCustomOverlay?: boolean;
 };
 
-type AssetProgressMessage = {
+export declare type AssetProgressMessage = {
   assetName?: string;
   fileName?: string;
   rootPath?: string;
@@ -50,7 +48,7 @@ type AssetProgressMessage = {
  * ES6 Interactive Babylon Toolkit Scene Viewer (GLTF)
  */
 function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes<HTMLCanvasElement>) {
-  const { fullPage, gameMode, sceneUrl, assetFiles, importMeshes, auxiliaryData, allowQueryParams, enableCustomOverlay  } = props;
+  const { fullPage, gameMode, sceneUrl, auxiliaryData, allowQueryParams, enableCustomOverlay  } = props;
   const { location } = useUnifiedNavigation();
   const createScene = useCallback(async (scene:Scene) => {
     if (scene.isDisposed) return; // Note: Strict mode safety
@@ -83,8 +81,6 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
       let isDevelopment: boolean = process.env.NODE_ENV === "development";
       let defaultPageUrl: URL = new URL(window.location.href.replace("#?", "?"));
       let babylonGameMode:string | undefined = gameMode || "DefaultGameMode";
-      let babylonAssetFiles:string[] | undefined = assetFiles;
-      let babylonImportMeshes:string[] | undefined = importMeshes;
       if (allowQueryParams === true) {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Unified Navigation Adapter Support (React Router, Next.js, Remix, etc.)
@@ -95,8 +91,6 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           rootPath = locSceneUrl.substring(0, locSceneUrl.lastIndexOf("/") + 1);
           sceneFile = locSceneUrl.substring(locSceneUrl.lastIndexOf("/") + 1);
         }
-        babylonAssetFiles = location?.state?.assetFiles || babylonAssetFiles;
-        babylonImportMeshes = location?.state?.importMeshes || babylonImportMeshes;
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         gameModeAuxiliaryData = location?.state?.auxiliaryData || gameModeAuxiliaryData;
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,155 +124,88 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         await invokeGameModeReady();
         return; // Note: Bail Out Early
       }
-      // Load runtime assets with SceneLoader to get byte-level progress callbacks.
-      const totalTopLevelAssets: number = 1 + (babylonImportMeshes?.length || 0) + (babylonAssetFiles?.length || 0);
-      let completedTopLevelAssets: number = 0;
-      const loadedByFile: Map<string, number> = new Map<string, number>();
-      const totalByFile: Map<string, number> = new Map<string, number>();
-      const formatMb = (bytes: number): string => (bytes / (1024 * 1024)).toFixed(2);
+      // Load base scene with granular progress fallback: percent → MB → static text.
+      const formatMb = (bytes: number): string => (bytes / (1024 * 1024)).toFixed(0);
       const postAssetMessage = (messageName: string, data: AssetProgressMessage): void => { GameManager.EventBus.PostMessage(messageName, data); };
-      const postOverallProgressMessage = (assetName: string): void => {
-        postAssetMessage("OnLoadProgress", {
-          assetName,
-          fileName: assetName,
-          rootPath: babylonRootPath,
-          sceneFile: babylonSceneFile,
-          completedAssets: completedTopLevelAssets,
-          totalAssets: totalTopLevelAssets,
-          overallPercent: totalTopLevelAssets > 0 ? (completedTopLevelAssets / totalTopLevelAssets) * 100 : 100,
-          message: `Overall progress ${completedTopLevelAssets}/${totalTopLevelAssets} assets`
-        });
-      };
-      const logProgress = (fileName: string, event: ISceneLoaderProgressEvent): void => {
-        loadedByFile.set(fileName, event.loaded);
-        if (event.lengthComputable) {
-          totalByFile.set(fileName, event.total);
-        }
-        let aggregateLoaded: number = 0;
-        let aggregateTotal: number = 0;
-        loadedByFile.forEach((value: number) => { aggregateLoaded += value; });
-        totalByFile.forEach((value: number) => { aggregateTotal += value; });
-        const filePercent: string = event.lengthComputable && event.total > 0 ? ((event.loaded / event.total) * 100).toFixed(1) + "%" : "n/a";
-        const aggregatePercent: string = aggregateTotal > 0 ? ((aggregateLoaded / aggregateTotal) * 100).toFixed(1) + "%" : "n/a";
-        postAssetMessage("OnAssetProgress", {
-          assetName: fileName,
-          fileName,
-          rootPath: babylonRootPath,
-          sceneFile: babylonSceneFile,
-          loadedBytes: event.loaded,
-          totalBytes: event.lengthComputable ? event.total : undefined,
-          percent: event.lengthComputable && event.total > 0 ? (event.loaded / event.total) * 100 : undefined,
-          aggregateLoadedBytes: aggregateLoaded,
-          aggregateTotalBytes: aggregateTotal > 0 ? aggregateTotal : undefined,
-          aggregatePercent: aggregateTotal > 0 ? (aggregateLoaded / aggregateTotal) * 100 : undefined,
-          completedAssets: completedTopLevelAssets,
-          totalAssets: totalTopLevelAssets,
-          message: event.lengthComputable
-            ? `Loading ${fileName} ${formatMb(event.loaded)}MB / ${formatMb(event.total)}MB (${filePercent})`
-            : `Loading ${fileName} ${formatMb(event.loaded)}MB / unknown`
-        });
-      };
-      const makeGltfPluginOptions = (fileName: string) => ({
-        gltf: {
-          preprocessUrlAsync: async (url: string) => {
-            postAssetMessage("OnAssetDependency", {
-              assetName: fileName,
-              fileName,
-              rootPath: babylonRootPath,
-              sceneFile: babylonSceneFile,
-              dependencyUrl: url,
-              completedAssets: completedTopLevelAssets,
-              totalAssets: totalTopLevelAssets,
-              message: `Dependency request for ${fileName}: ${url}`
-            });
-            return url;
-          }
-        }
+      // Post initial load start.
+      postAssetMessage("OnLoadProgress", {
+        assetName: babylonSceneFile,
+        fileName: babylonSceneFile,
+        rootPath: babylonRootPath,
+        sceneFile: babylonSceneFile,
+        completedAssets: 0,
+        totalAssets: 1,
+        overallPercent: 0,
+        message: "Loading..."
       });
-      // Primary scene import.
-      postOverallProgressMessage(babylonSceneFile);
       await ImportMeshAsync(babylonSceneFile, scene, {
         meshNames: null,
         rootUrl: babylonRootPath,
         onProgress: (event: ISceneLoaderProgressEvent) => {
-          logProgress(babylonSceneFile, event);
+          let percent: number | undefined;
+          let message: string;
+          if (event.lengthComputable && event.total > 0) {
+            // Best: granular percent 0–100
+            percent = (event.loaded / event.total) * 100;
+            message = `Loading ${percent.toFixed(0)}%`;
+          } else if (event.loaded > 0) {
+            // Second best: MB downloaded
+            message = `Loading ${formatMb(event.loaded)} MB`;
+          } else {
+            // Fallback: static text
+            message = "Loading...";
+          }
+          postAssetMessage("OnLoadProgress", {
+            assetName: babylonSceneFile,
+            fileName: babylonSceneFile,
+            rootPath: babylonRootPath,
+            sceneFile: babylonSceneFile,
+            loadedBytes: event.loaded,
+            totalBytes: event.lengthComputable ? event.total : undefined,
+            percent,
+            completedAssets: 0,
+            totalAssets: 1,
+            overallPercent: percent,
+            message
+          });
         },
-        pluginOptions: makeGltfPluginOptions(babylonSceneFile)
+        pluginOptions: {
+          gltf: {
+            preprocessUrlAsync: async (url: string) => {
+              postAssetMessage("OnAssetDependency", {
+                assetName: babylonSceneFile,
+                fileName: babylonSceneFile,
+                rootPath: babylonRootPath,
+                sceneFile: babylonSceneFile,
+                dependencyUrl: url,
+                completedAssets: 0,
+                totalAssets: 1,
+                message: `Dependency: ${url}`
+              });
+              return url;
+            }
+          }
+        }
       });
-      completedTopLevelAssets++;
-      postOverallProgressMessage(babylonSceneFile);
+      // Post scene load completion messages.
       postAssetMessage("OnAssetComplete", {
         assetName: babylonSceneFile,
         fileName: babylonSceneFile,
         rootPath: babylonRootPath,
         sceneFile: babylonSceneFile,
-        completedAssets: completedTopLevelAssets,
-        totalAssets: totalTopLevelAssets,
-        message: `Completed ${babylonSceneFile} (${completedTopLevelAssets}/${totalTopLevelAssets})`
+        completedAssets: 1,
+        totalAssets: 1,
+        message: `Completed ${babylonSceneFile}`
       });
-      // Optional additional mesh imports.
-      if (babylonImportMeshes != null && babylonImportMeshes.length > 0) {
-        for (const meshFile of babylonImportMeshes) {
-          postOverallProgressMessage(meshFile);
-          await ImportMeshAsync(meshFile, scene, {
-            meshNames: "",
-            rootUrl: babylonRootPath,
-            onProgress: (event: ISceneLoaderProgressEvent) => {
-              logProgress(meshFile, event);
-            },
-            pluginOptions: makeGltfPluginOptions(meshFile)
-          });
-          completedTopLevelAssets++;
-          postOverallProgressMessage(meshFile);
-          postAssetMessage("OnAssetComplete", {
-            assetName: meshFile,
-            fileName: meshFile,
-            rootPath: babylonRootPath,
-            sceneFile: babylonSceneFile,
-            completedAssets: completedTopLevelAssets,
-            totalAssets: totalTopLevelAssets,
-            message: `Completed ${meshFile} (${completedTopLevelAssets}/${totalTopLevelAssets})`
-          });
-        }
-      }
-      // Optional asset containers for prefab-style content.
-      if (babylonAssetFiles != null && babylonAssetFiles.length > 0) {
-        for (const assetFile of babylonAssetFiles) {
-          postOverallProgressMessage(assetFile);
-          const loadedContainer = await LoadAssetContainerAsync(assetFile, scene, {
-            rootUrl: babylonRootPath,
-            onProgress: (event: ISceneLoaderProgressEvent) => {
-              logProgress(assetFile, event);
-            },
-            pluginOptions: makeGltfPluginOptions(assetFile)
-          });
-          if (loadedContainer != null) {
-            const assetTaskKey: string = assetFile.toLowerCase();
-            SceneManager.RegisterAssetContainer(scene, assetTaskKey, loadedContainer);
-          }
-          completedTopLevelAssets++;
-          postOverallProgressMessage(assetFile);
-          postAssetMessage("OnAssetComplete", {
-            assetName: assetFile,
-            fileName: assetFile,
-            rootPath: babylonRootPath,
-            sceneFile: babylonSceneFile,
-            completedAssets: completedTopLevelAssets,
-            totalAssets: totalTopLevelAssets,
-            message: `Completed ${assetFile} (${completedTopLevelAssets}/${totalTopLevelAssets})`
-          });
-        }
-      }
-      // Final overall completion message.
       postAssetMessage("OnLoadComplete", {
         assetName: babylonSceneFile,
         fileName: babylonSceneFile,
         rootPath: babylonRootPath,
         sceneFile: babylonSceneFile,
-        completedAssets: completedTopLevelAssets,
-        totalAssets: totalTopLevelAssets,
-        overallPercent: totalTopLevelAssets > 0 ? (completedTopLevelAssets / totalTopLevelAssets) * 100 : 100,
-        message: `Load complete: ${completedTopLevelAssets}/${totalTopLevelAssets} assets`
+        completedAssets: 1,
+        totalAssets: 1,
+        overallPercent: 100,
+        message: `Load complete: ${babylonSceneFile}`
       });
       if (disposed || scene.isDisposed) return; // Note: Strict mode safety
     } catch (error) {
@@ -300,7 +227,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         console.error("Failed to remove dispose observer", e);
       }
     }
-  }, [gameMode, sceneUrl, assetFiles, importMeshes, auxiliaryData, allowQueryParams, location]);
+  }, [gameMode, sceneUrl, auxiliaryData, allowQueryParams, location]);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////
   // OPTIONAL: Add custom loading div over the root div and disable the default loading screen
