@@ -12,7 +12,7 @@ export class PlayerControllerDemo extends GameModeController {
 
     protected async createScene(props: any): Promise<void> {
         // Load the player armature and create a third-person player controller
-        GameManager.PostProgressStatus("Importing Player Armature ...");
+        GameManager.PostProgressStatus("Loading Player Armature ...");
         const playerPrefab = "playerarmature.gltf";
         const assetRepoPath = GameManager.PlaygroundRepo;
         const assetsManager = new AssetsManager(this.scene);
