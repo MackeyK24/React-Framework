@@ -14,7 +14,7 @@ export class PlayerControllerDemo extends GameModeController {
         // Load the player armature and create a third-person player controller
         GameManager.PostProgressStatus("Importing Player Armature...");
         const playerPrefab = "playerarmature.gltf";
-        const assetRepoPath = SceneManager.PlaygroundRepo;
+        const assetRepoPath = GameManager.PlaygroundRepo;
         const assetsManager = new AssetsManager(this.scene);
         assetsManager.addMeshTask("playerarmature", null, assetRepoPath, playerPrefab);
         await SceneManager.LoadRuntimeAssets(assetsManager, [playerPrefab], ()=> {
