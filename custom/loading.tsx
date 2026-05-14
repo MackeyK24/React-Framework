@@ -5,7 +5,7 @@ export function DefaultBabylonPreloader() {
     <>
       <div style={{ position: 'fixed', inset: 0, backgroundColor: '#2A2342', display: 'grid', placeItems: 'center', zIndex: 10001 }}>
         <div style={{ position: 'absolute', right: '18px', bottom: '12px', fontFamily: 'Arial', fontSize: '12px', color: 'white', opacity: 0.9, letterSpacing: '0.3px' }}>
-          Loading Engine ...
+          Downloading ...
         </div>
         <img
           src={babylonLogo}
