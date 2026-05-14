@@ -136,7 +136,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
         completedAssets: 0,
         totalAssets: 1,
         overallPercent: 0,
-        message: "Loading..."
+        message: "Loading Scene ..."
       });
       await ImportMeshAsync(babylonSceneFile, scene, {
         meshNames: null,
@@ -147,13 +147,13 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
           if (event.lengthComputable && event.total > 0) {
             // Best: granular percent 0–100
             percent = (event.loaded / event.total) * 100;
-            message = `Loading ${percent.toFixed(0)}%`;
+            message = `Loading Scene ${percent.toFixed(0)}%`;
           } else if (event.loaded > 0) {
             // Second best: MB downloaded
-            message = `Loading ${formatMb(event.loaded)} MB`;
+            message = `Loading Scene ${formatMb(event.loaded)} MB`;
           } else {
             // Fallback: static text
-            message = "Loading...";
+            message = "Loading Scene ...";
           }
           postAssetMessage("OnLoadProgress", {
             assetName: babylonSceneFile,

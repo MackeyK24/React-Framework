@@ -26,7 +26,7 @@ type AssetProgressMessage = {
 function SplashScreen() {
   const logoSrc = babylonLogo;
   const spinnerSrc = spinnerLogo;
-  const [statusText, setStatusText] = useState<string>("Loading...");
+  const [statusText, setStatusText] = useState<string>("Loading Scene ...");
   useEffect(() => {
     const onLoadProgress = (data: AssetProgressMessage) => {
       const completed = data.completedAssets ?? 0;
