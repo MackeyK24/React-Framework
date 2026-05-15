@@ -48,7 +48,7 @@ export class DefaultGameMode extends GameModeController {
         /* Destroy component function */
     }
 
-    protected async createScene(props: any): Promise<void> {
+    protected async createScene(data?: any): Promise<void> {
         /* Create scene content here */
     }
 }

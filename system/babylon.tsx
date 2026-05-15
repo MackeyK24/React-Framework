@@ -21,7 +21,7 @@ export declare type SceneViewerProps = {
   fullPage?: boolean;
   gameMode?: string;
   sceneUrl?: string;
-  auxiliaryData?: string;
+  auxiliaryData?: any;
   allowQueryParams?: boolean;
   enableCustomOverlay?: boolean;
 };
@@ -57,7 +57,7 @@ function BabylonSceneViewer(props: SceneViewerProps & React.CanvasHTMLAttributes
     let rootPath: string | null = sceneUrl != null && sceneUrl !== "" ? sceneUrl.substring(0, sceneUrl.lastIndexOf("/") + 1) : null;
     let sceneFile: string | null = sceneUrl != null && sceneUrl !== "" ? sceneUrl.substring(sceneUrl.lastIndexOf("/") + 1) : null;
     let gameModeController: ScriptComponent = null;
-    let gameModeAuxiliaryData:string | undefined = auxiliaryData;
+    let gameModeAuxiliaryData:any | undefined = auxiliaryData;
     let gameModeReadyInvoked: boolean = false;
     const invokeGameModeReady = async (): Promise<void> => {
       if (gameModeReadyInvoked || disposed || scene.isDisposed) return;

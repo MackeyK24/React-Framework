@@ -6,9 +6,9 @@ import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { SceneManager, GameModeController } from "@babylonjs-toolkit/next";
 
-export class PlaygroundDemoScene extends GameModeController {
+export class VehicleMechanicsDemo extends GameModeController {
     
-    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "PlaygroundDemoScene") {
+    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "VehicleMechanicsDemo") {
         super(transform, scene, properties, alias);
     }
     
@@ -41,4 +41,4 @@ export class PlaygroundDemoScene extends GameModeController {
     }
 }
 
-SceneManager.RegisterClass("PlaygroundDemoScene", PlaygroundDemoScene);
+SceneManager.RegisterClass("VehicleMechanicsDemo", VehicleMechanicsDemo);

@@ -17,7 +17,7 @@ interface ApplicationRouteProps {
  * OR
  * @example
  * GameManager.NavigateTo("/play", {
- *     gameMode: "DefaultGameMode",
+ *     gameMode: "PlayerControllerDemo",
  *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
  * });
  */

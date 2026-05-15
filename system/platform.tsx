@@ -18,7 +18,7 @@ import { createContext, createElement, useContext, ReactNode } from "react";
 export interface INavigationState {
     gameMode?: string;
     sceneUrl?: string;
-    auxiliaryData?: string;
+    auxiliaryData?: any;
 }
 
 export type NavigationState = INavigationState & {

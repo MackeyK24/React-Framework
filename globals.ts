@@ -22,9 +22,10 @@ class GameManager {
         await import("@babylonjs-toolkit/dlc/ThirdPersonPlayerController");
         // Note: Game Mode Classes That Are Not Directly Referenced in the Runtime.
         await import("./classes/DefaultGameMode");
-        await import("./classes/PlayerControllerDemo");
         await import("./classes/FreeCameraMode");
+        await import("./classes/PlayerControllerDemo");
         await import("./classes/PlaygroundDemoScene");
+        await import("./classes/VehicleMechanicsDemo");
         if (scene.isDisposed) return; // Note: Strict mode safety
         // Havok is only loaded once globally AFTER SceneManager.InitializeRuntime
         if (enablePhysics)
@@ -67,7 +68,7 @@ class GameManager {
      *
      * @example
     * GameManager.NavigateTo("/play", {
-    *     gameMode: "DefaultGameMode",
+    *     gameMode: "PlayerControllerDemo",
     *     sceneUrl: GameManager.PlaygroundRepo + "samplescene.gltf",
     * });
      */
