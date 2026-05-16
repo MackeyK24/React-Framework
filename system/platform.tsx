@@ -63,6 +63,7 @@ export function NavigationProvider({ value, children }: { value: UnifiedNavigati
  * Consumer hook used everywhere inside babylon/.
  * Throws if no <NavigationProvider> is mounted above.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useUnifiedNavigation(): UnifiedNavigation {
   const ctx = useContext(NavigationContext);
   if (!ctx) {
