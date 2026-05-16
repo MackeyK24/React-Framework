@@ -6,9 +6,9 @@ import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { SceneManager, GameModeController } from "@babylonjs-toolkit/next";
 
-export class VehicleMechanicsDemo extends GameModeController {
+export class VehicleControllerDemo extends GameModeController {
     
-    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "VehicleMechanicsDemo") {
+    constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "VehicleControllerDemo") {
         super(transform, scene, properties, alias);
         this.hideSplashScreenDelayMs = 3000;
     }
@@ -42,4 +42,4 @@ export class VehicleMechanicsDemo extends GameModeController {
     }
 }
 
-SceneManager.RegisterClass("VehicleMechanicsDemo", VehicleMechanicsDemo);
+SceneManager.RegisterClass("VehicleControllerDemo", VehicleControllerDemo);

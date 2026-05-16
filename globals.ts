@@ -25,7 +25,7 @@ class GameManager {
         await import("./classes/FreeCameraMode");
         await import("./classes/PlayerControllerDemo");
         await import("./classes/PlaygroundDemoScene");
-        await import("./classes/VehicleMechanicsDemo");
+        await import("./classes/VehicleControllerDemo");
         if (scene.isDisposed) return; // Note: Strict mode safety
         // Havok is only loaded once globally AFTER SceneManager.InitializeRuntime
         if (enablePhysics)
