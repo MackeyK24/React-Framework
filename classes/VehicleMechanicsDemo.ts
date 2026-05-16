@@ -10,6 +10,7 @@ export class VehicleMechanicsDemo extends GameModeController {
     
     constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "VehicleMechanicsDemo") {
         super(transform, scene, properties, alias);
+        this.hideSplashScreenDelayMs = 3000;
     }
     
     protected async createScene(data?: any): Promise<void> {

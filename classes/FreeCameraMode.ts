@@ -9,6 +9,7 @@ export class FreeCameraMode extends GameModeController {
 
     constructor(transform: TransformNode, scene: Scene, properties: any = {}, alias: string = "FreeCameraMode") {
         super(transform, scene, properties, alias);
+        this.hideSplashScreenDelayMs = 3000;
     }
 
     protected destroy(): void {
