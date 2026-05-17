@@ -49,26 +49,33 @@ function BaseSceneViewer(props: BabylonjsProps & React.CanvasHTMLAttributes<HTML
           if (!canvas) return;
 
           try {
-              if (typeof navigator !== "undefined" && (navigator as any).gpu && webgpu) {            
-                  const webgpuEngine = new WebGPUEngine(canvas, {
-                      ...engineOptions,
-                      antialias,
-                      adaptToDeviceRatio,
-                      setMaximumLimits: true,
-                      enableAllFeatures: true,
-                  });
-                  await webgpuEngine.initAsync(
-                      { jsPath: "scripts/glslang.js", wasmPath: "scripts/glslang.wasm" },
-                      { jsPath: "scripts/twgsl.js", wasmPath: "scripts/twgsl.wasm" }
-                  );
+              if (typeof navigator !== "undefined" && (navigator as any).gpu && webgpu) {
+                  try {
+                      const webgpuEngine = new WebGPUEngine(canvas, {
+                          ...engineOptions,
+                          antialias,
+                          adaptToDeviceRatio,
+                          setMaximumLimits: true,
+                          enableAllFeatures: true,
+                      });
+                      await webgpuEngine.initAsync(
+                          { jsPath: "scripts/glslang.js", wasmPath: "scripts/glslang.wasm" },
+                          { jsPath: "scripts/twgsl.js", wasmPath: "scripts/twgsl.wasm" }
+                      );
 
-                  if (disposeRequested) {
-                      try { webgpuEngine.dispose(); } catch (e) { console.warn(e); }
-                      return;
+                      if (disposeRequested) {
+                          try { webgpuEngine.dispose(); } catch (e) { console.warn(e); }
+                          return;
+                      }
+
+                      engine = webgpuEngine as unknown as AbstractEngine;
+                  } catch (webgpuError) {
+                      console.warn("WebGPU initialization failed, falling back to WebGL.", webgpuError);
+                      engine = null;
                   }
+              }
 
-                  engine = webgpuEngine as unknown as AbstractEngine;
-              } else {
+              if (!engine) {
                   const fallbackEngine = new Engine(canvas, antialias, engineOptions, adaptToDeviceRatio);
 
                   if (disposeRequested) {
